@@ -1,0 +1,54 @@
+version: '3'
+services:
+  web:
+    build: .
+    container_name: notification_sender
+    hostname: notification_sender
+    command: flask run -h 0.0.0.0
+    ports:
+    - '5000:5000'
+    volumes:
+    - .:/usr/src/app/
+    env_file:
+      - ./.env
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - web-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: notification_sender_mq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbit-storage:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=Admin123_
+    networks:
+      - web-network
+
+  db:
+    image: postgres:12-alpine
+    container_name: database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=notification
+      - POSTGRES_PASSWORD=N0t!f!c@t!0n_
+      - POSTGRES_DB=notification_sender_dev
+    ports:
+      - '5432:5432'
+    networks:
+      - web-network
+
+volumes:
+  rabbit-storage:
+  postgres_data:
+
+networks:
+  web-network:

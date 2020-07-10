@@ -1,0 +1,30 @@
+[default]
+TITLE = 'Notification Sender'
+DEBUG = true
+SECRET_KEY = "jadkfbsdkjbfbh"
+SQLALCHEMY_DATABASE_URI = 'postgresql://notification:N0t!f!c@t!0n_@db:5432/notification_sender_dev'
+SQLALCHEMY_TRACK_MODIFICATIONS = false
+
+[testing]
+SQLALCHEMY_DATABASE_URI = 'postgresql://notification:N0t!f!c@t!0n_@db:5432/notification_sender_dev'
+
+[production]
+SQLALCHEMY_DATABASE_URI = 'postgresql://notification:N0t!f!c@t!0n_@db:5432/notification_sender_dev'
+
+[logging]
+version=1
+
+[logging.formatters.default]
+format = '[%(asctime)s][%(levelname)s][%(name)s]: %(message)s'
+
+[logging.handlers.wsgi]
+class = 'logging.StreamHandler'
+stream = 'ext://flask.logging.wsgi_errors_stream'
+formatter = 'default'
+
+[logging.root]
+level = 'INFO'
+handlers = [
+    'wsgi',
+]
+

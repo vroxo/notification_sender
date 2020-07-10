@@ -1,0 +1,107 @@
+openapi: 3.0.1
+info:
+  title: Sender Notification API
+  description: API that centralizes the sending of notifications to pre-selected users.
+  version: 0.1.0
+servers:
+  - url: /api/v1
+
+paths:
+  /sender:
+    post:
+      tags:
+        - Sender
+      summary: Sends message to specific users
+      operationId: notification_sender.api.resources.send
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        200:
+          description: MessageVo sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneralResponse'
+              example:
+                error: false
+                message: 'Your message is sent!'
+
+  /omnichannel-sender:
+    post:
+      tags:
+        - Omnichannel
+      summary: Sends message to specific users by specific channels
+      operationId: notification_sender.api.omnichannel.send
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OmnichannelMessages'
+      responses:
+        200:
+          description: MessageVo sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneralResponse'
+              example:
+                error: false
+                message: 'Your messages is sent!'
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        channel:
+          type: integer
+          minimum: 1
+        text:
+          type: string
+          minLength: 3
+          maxLength: 4096
+        users:
+          type: array
+          items:
+            type: string
+            minLength: 3
+            maxLength: 35
+          minItems: 1
+      required:
+        - channel
+        - text
+        - users
+      example:
+        channel: "telegram"
+        text: "This is a notification message for one or more users"
+        users: ['@User1', '@User2']
+
+    OmnichannelMessages:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+      required:
+        - messages
+      example:
+        messages: [{"channel": "telegram", "text": "This is a notification message for one or more users", "users": ['@User1', '@User2']}, {"channel": "email", "text": "This is a notification message for one or more users", "users": ['user1@gmail.com', 'user2@gmail.com']}]
+
+    GeneralResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+        message:
+          type: string
+      example:
+        error: true
+        message: '400 - Payload error.'
+      required:
+        - error
+        - message
